@@ -3,6 +3,7 @@ project(YourProjectName)
 
 # Set C++ standard
 set(CMAKE_CXX_STANDARD 17)
+SET(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/../)
 
 # Add include directories
 include_directories(include)
