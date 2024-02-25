@@ -21,12 +21,12 @@ add_executable(main ${SOURCES})
 # Windows
 IF(WIN32) 
     target_link_libraries(main
+        ${CMAKE_SOURCE_DIR}/lib/libglfw3.a
+        ${CMAKE_SOURCE_DIR}/lib/glew32s.lib
         glu32
         opengl32
         winmm
         gdi32
-        glfw
-        GLEW
     )
 ELSE()
     target_link_libraries(main
@@ -42,3 +42,5 @@ ELSE()
         pthread
     )
 ENDIF()
+
+ADD_DEFINITIONS(-DGLEW_STATIC)
