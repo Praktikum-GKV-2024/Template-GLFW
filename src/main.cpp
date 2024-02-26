@@ -5,18 +5,18 @@
 #include <GLFW/glfw3.h>
 #include <iostream>
 #include <string>
-#include "MainScene.cpp"
+#include "IBO.cpp"
 
-#define GLCall(x) GLClearError(); x; GLLogCall(#x, __FILE__, __LINE__)
+// #define GLCall(x) GLClearError(); x; GLLogCall(#x, __FILE__, __LINE__)
 
-static void GLClearError() {
-    while (glGetError() != GL_NO_ERROR);
-}
-static void GLLogCall(const char* function_name, const char* file, int line) {
-    while (GLenum error = glGetError()) {
-        cout << "Triggered Error Code: " << error << " at function call " << function_name << ", at " << file << ":" << line << std::endl;
-    }
-}
+// static void GLClearError() {
+//     while (glGetError() != GL_NO_ERROR);
+// }
+// static void GLLogCall(const char* function_name, const char* file, int line) {
+//     while (GLenum error = glGetError()) {
+//         cout << "Triggered Error Code: " << error << " at function call " << function_name << ", at " << file << ":" << line << std::endl;
+//     }
+// }
 
 int main(void) {
     GLFWwindow* window;

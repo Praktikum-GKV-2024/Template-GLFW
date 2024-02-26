@@ -34,7 +34,7 @@ public:
         glDepthFunc(GL_LESS); 
 
         // Cull triangles which normal is not towards the camera
-        glEnable(GL_CULL_FACE);
+        // glEnable(GL_CULL_FACE);
 
         start();
     }
@@ -47,11 +47,10 @@ public:
             0, 0,
             1, 1,
             0, 1,
-
-
-            -1, -1,
+            
             0, 0,
-            0, -1
+            -1, 0,
+            -1, -1
         };
         glGenBuffers(1, &buffer);
         glBindBuffer(GL_ARRAY_BUFFER, buffer);
@@ -74,6 +73,7 @@ public:
         /* do every frame here*/
         glUseProgram(programId);
         // glBindVertexArray(buffer);
-        glDrawArrays(GL_TRIANGLES, 0, 6);
+        glDrawArrays(GL_TRIANGLES, 0, 3);
+        glDrawArrays(GL_TRIANGLES, 3, 3);
     }
 };

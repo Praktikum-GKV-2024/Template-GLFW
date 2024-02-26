@@ -47,7 +47,7 @@ public:
         glDepthFunc(GL_LESS); 
 
         // Cull triangles which normal is not towards the camera
-        glEnable(GL_CULL_FACE);
+        // glEnable(GL_CULL_FACE);
 
         start();
     }
@@ -60,7 +60,7 @@ public:
              0.5f,  0.5f, // 0
              0.5f, -0.5f, // 1
             -0.5f, -0.5f, // 2
-            -0.5f, -0.5f  // 3
+            -0.5f,  0.5f  // 3
         };
 
         unsigned int indices[] = {
