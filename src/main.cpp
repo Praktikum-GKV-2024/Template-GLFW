@@ -7,6 +7,17 @@
 #include <string>
 #include "MainScene.cpp"
 
+#define GLCall(x) GLClearError(); x; GLLogCall(#x, __FILE__, __LINE__)
+
+static void GLClearError() {
+    while (glGetError() != GL_NO_ERROR);
+}
+static void GLLogCall(const char* function_name, const char* file, int line) {
+    while (GLenum error = glGetError()) {
+        cout << "Triggered Error Code: " << error << " at function call " << function_name << ", at " << file << ":" << line << std::endl;
+    }
+}
+
 int main(void) {
     GLFWwindow* window;
 
@@ -25,9 +36,10 @@ int main(void) {
     /* Options untuk GLFW*/
     glfwWindowHint(GLFW_SAMPLES, 4);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE); // To make macOS happy; should not be needed
-	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
+	// glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_COMPAT_PROFILE);
+	// glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+	// menggunakan OpenGL 3.0 (masih dapat menggunakan legacy)
 
     /* Create a windowed mode window and its OpenGL context */
     std::string window_title = "Template - GLFW";
@@ -58,25 +70,20 @@ int main(void) {
 
     // ========================================================
 
-
-    // Ensure we can capture the escape key being pressed below
-	glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_TRUE);
-    // Hide the mouse and enable unlimited movement
-    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-    
-    // Set the mouse at the center of the screen
-    glfwPollEvents();
-    glfwSetCursorPos(window, 1024/2, 768/2);
-
 	// Instantiate MainScene
     MainScene* scene = new MainScene(window);
 
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window)) {
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		glClear(GL_COLOR_BUFFER_BIT);
 
         /* update frame of the scene */
         scene->update();
+
+        GLenum err;
+        while((err = glGetError()) != GL_NO_ERROR)
+        {
+        }
 
         /* Swap front and back buffers */
         glfwSwapBuffers(window);

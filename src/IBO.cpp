@@ -17,10 +17,23 @@
 #include <common/controls.hpp>
 #include <common/shader.hpp>
 
+#define GLCall(x) GLClearError(); x; GLLogCall(#x, __FILE__, __LINE__)
+
+static void GLClearError() {
+    while (glGetError() != GL_NO_ERROR);
+}
+static void GLLogCall(const char* function_name, const char* file, int line) {
+    while (GLenum error = glGetError()) {
+        cout << "Triggered Error Code: " << error << " at function call " << function_name << ", at " << file << ":" << line << std::endl;
+    }
+}
+
 class MainScene {
 public:
     GLFWwindow* window;
+    GLuint vao;
     GLuint buffer;
+    GLuint ibo;
     GLuint programId;
 
     MainScene (GLFWwindow* window) {
@@ -42,30 +55,48 @@ public:
     void start() {
         programId = LoadShaders("res/shader/super_basic.vs", "res/shader/super_basic.fs");
 
-        // GLuint buffer;
+        // vertecies yang di pass ke GPU
         float positions[] = {
-            0, 0,
-            1, 1,
-            0, 1,
-
-
-            -1, -1,
-            0, 0,
-            0, -1
+             0.5f,  0.5f, // 0
+             0.5f, -0.5f, // 1
+            -0.5f, -0.5f, // 2
+            -0.5f, -0.5f  // 3
         };
+
+        unsigned int indices[] = {
+            0, 1, 2,
+            2, 3, 0
+        };
+
+        // Initialize Vertex Array Buffer
+        glGenVertexArrays(1, &vao);
+        glBindVertexArray(vao);
+
+        // setup vertex buffers
         glGenBuffers(1, &buffer);
         glBindBuffer(GL_ARRAY_BUFFER, buffer);
-        glBufferData(GL_ARRAY_BUFFER, 12 * sizeof(float), positions, GL_STATIC_DRAW);
+        glBufferData(GL_ARRAY_BUFFER, 4 * 2 * sizeof(float), positions, GL_STATIC_DRAW);
 
+        // setting the layout
         glEnableVertexAttribArray(0);
         glVertexAttribPointer(
             0, // index untuk layout VAO
             2, // vector size of data type
             GL_FLOAT, // data type
             GL_FALSE, // normalized? map to 0 - 255
-            2 * sizeof(float), // stride
+            2 * sizeof(float), // gaps
             0                  // offset
         );
+
+        glGenBuffers(1, &ibo);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, 3 * 2 * sizeof(unsigned int), indices, GL_STATIC_DRAW);
+
+        glBindVertexArray(0);
+        glUseProgram(0);
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+
     }
 
     void update() {
@@ -73,7 +104,13 @@ public:
         
         /* do every frame here*/
         glUseProgram(programId);
-        // glBindVertexArray(buffer);
-        glDrawArrays(GL_TRIANGLES, 0, 6);
+
+        glBindVertexArray(vao);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
+
+        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
+
+
+        // glDrawArrays(GL_TRIANGLES, 0, 3);
     }
 };
